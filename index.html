@@ -1,631 +1,1346 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>2-Worlds</title>
-  <style>
-    :root {
-      --primary-pink: #d81b60;
-      --deep-pink: #880e4f;
-      --gold: #d4af37;
-      --dark-bg: #0a0508;
-      --crimson: #990000;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#172c24">
+<title>2 Worlds | A Tale of Two Realms</title>
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Georgia', serif;
-    }
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:wght@400;500;600;700&family=Tiro+Devanagari+Hindi&display=swap');
 
-    body {
-      background-color: #0f050b;
-      color: #fff;
-      overflow-x: hidden;
-      min-height: 100vh;
-    }
+:root {
+  --green:#193c2d;
+  --lightgreen:#b6c9a7;
+  --pink:#e6a2b3;
+  --cream:#fff4df;
+  --gold:#c9a45b;
+  --red:#9b101b;
+  --dark:#100509;
+}
 
-    /* --- CURTAIN LANDING SCREEN --- */
-    #curtain-wrapper {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 9999;
-      display: flex;
-      cursor: pointer;
-      overflow: hidden;
-    }
+* {box-sizing:border-box;margin:0;padding:0}
 
-    .curtain-half {
-      width: 50vw;
-      height: 100vh;
-      background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1590736969955-71cc94801759?q=80&w=1000&auto=format&fit=crop') center/cover no-repeat;
-      transition: transform 1.5s cubic-bezier(0.77, 0, 0.175, 1);
-      position: relative;
-    }
+body {
+  background:#17271e;
+  color:#fff;
+  font-family:'Cormorant Garamond',serif;
+  overflow-x:hidden;
+  min-height:100vh;
+}
 
-    .curtain-left { border-right: 2px solid var(--gold); }
-    .curtain-right { border-left: 2px solid var(--gold); }
+button,input,textarea {font:inherit}
+button {cursor:pointer}
 
-    #curtain-wrapper.open .curtain-left { transform: translateX(-100%); }
-    #curtain-wrapper.open .curtain-right { transform: translateX(100%); }
+/* FLOWER ENTRANCE */
 
-    .curtain-text {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 10000;
-      text-align: center;
-      pointer-events: none;
-      transition: opacity 0.8s ease;
-      color: #fff;
-      text-shadow: 0 0 15px rgba(216, 27, 96, 0.9), 0 0 5px #000;
-    }
+#entrance {
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  display:flex;
+  overflow:hidden;
+  background:#173729;
+  cursor:pointer;
+}
 
-    .curtain-text h1 { font-size: 2.5rem; letter-spacing: 3px; margin-bottom: 10px; }
-    .curtain-text p { font-size: 1.1rem; color: #f8bbd0; }
+.flower-half {
+  width:50%;
+  height:100%;
+  position:relative;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+  background:
+    radial-gradient(ellipse at 50% 50%,#597d52 0%,#244c37 48%,#10291e 100%);
+  transition:transform 2s cubic-bezier(.7,0,.2,1);
+}
 
-    #curtain-wrapper.open + .curtain-text,
-    #curtain-wrapper.open .curtain-text { opacity: 0; }
+.flower-half.left {
+  border-right:1px solid #c9a45b;
+}
 
-    /* --- COMMON CONTAINER --- */
-    .realm { display: none; min-height: 100vh; padding: 20px; position: relative; }
-    .realm.active { display: block; }
+#entrance.open .left {transform:translateX(-105%)}
+#entrance.open .right {transform:translateX(105%)}
 
-    /* --- WORLD 1: ROYAL BOUGAINVILLEA REALM --- */
-    #world-1 {
-      background: radial-gradient(circle, #2c001e 0%, #0f050b 100%);
-      padding-bottom: 80px;
-    }
+.flower-art {
+  position:absolute;
+  font-size:clamp(2rem,7vw,5rem);
+  line-height:1.5;
+  text-align:center;
+  filter:drop-shadow(0 5px 8px #0006);
+  animation:sway 4s ease-in-out infinite;
+}
 
-    header.w1-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px 20px;
-      border-bottom: 2px solid var(--gold);
-      background: rgba(20, 5, 15, 0.7);
-    }
+.flower-art.one {top:10%;left:8%}
+.flower-art.two {top:35%;right:8%}
+.flower-art.three {bottom:12%;left:12%}
+.flower-art.four {bottom:35%;right:10%}
 
-    .motif-card { font-size: 2rem; cursor: pointer; user-select: none; }
-    .center-flower { font-size: 2.2rem; cursor: pointer; user-select: none; }
+@keyframes sway {
+  0%,100% {transform:rotate(-5deg)}
+  50% {transform:rotate(5deg)}
+}
 
-    .section-title {
-      text-align: center;
-      color: var(--gold);
-      margin: 30px 0 15px 0;
-      font-size: 1.8rem;
-      text-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
-    }
+.entrance-title {
+  position:absolute;
+  z-index:5;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  text-align:center;
+  pointer-events:none;
+  text-shadow:0 3px 15px #000;
+  transition:opacity .7s;
+}
 
-    .grid-gallery {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-      max-width: 1000px;
-      margin: 0 auto 30px auto;
-    }
+.entrance-title h1 {
+  font-family:'Cinzel',serif;
+  font-size:clamp(2rem,8vw,4.5rem);
+  letter-spacing:5px;
+  color:#fff0d4;
+}
 
-    .card {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--gold);
-      border-radius: 12px;
-      padding: 15px;
-      text-align: center;
-      backdrop-filter: blur(5px);
-      box-shadow: 0 4px 15px rgba(216, 27, 96, 0.2);
-    }
+.entrance-title p {
+  color:#f3d6df;
+  font-size:1.25rem;
+  margin-top:12px;
+  letter-spacing:2px;
+}
 
-    .slider-container {
-      position: relative;
-      width: 100%;
-      height: 220px;
-      margin-bottom: 12px;
-      border-radius: 8px;
-      overflow: hidden;
-      background: #000;
-    }
+#entrance.open .entrance-title {opacity:0}
 
-    .slider-container img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+/* COMMON */
 
-    .slider-btn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(0, 0, 0, 0.6);
-      color: #fff;
-      border: 1px solid var(--gold);
-      padding: 6px 10px;
-      cursor: pointer;
-      border-radius: 4px;
-      font-size: 0.9rem;
-    }
-    .slider-prev { left: 5px; }
-    .slider-next { right: 5px; }
+.world {display:none;min-height:100vh}
+.world.active {display:block}
 
-    .upload-btn {
-      background: linear-gradient(45deg, var(--primary-pink), var(--deep-pink));
-      color: #fff;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      margin-top: 5px;
-    }
+.section-title {
+  font-family:'Cinzel',serif;
+  text-align:center;
+  font-size:clamp(1.5rem,5vw,2.4rem);
+  margin:45px 10px 25px;
+  letter-spacing:2px;
+}
 
-    /* Secret Love Note Section */
-    .love-note-box {
-      max-width: 800px;
-      margin: 30px auto;
-      background: rgba(44, 0, 30, 0.8);
-      border: 1px solid var(--gold);
-      border-radius: 12px;
-      padding: 20px;
-      text-align: center;
-      box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
-    }
-    .love-note-box textarea {
-      width: 100%;
-      height: 120px;
-      background: rgba(0, 0, 0, 0.6);
-      border: 1px solid var(--gold);
-      color: #f8bbd0;
-      padding: 12px;
-      border-radius: 8px;
-      font-size: 1rem;
-      margin-top: 10px;
-      resize: vertical;
-    }
+.sub-title {
+  text-align:center;
+  font-size:1.2rem;
+  margin-bottom:25px;
+  opacity:.8;
+}
 
-    /* --- BIOMETRIC MODAL --- */
-    #bio-modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; width: 100vw; height: 100vh;
-      background: rgba(0, 0, 0, 0.9);
-      z-index: 20000;
-      justify-content: center;
-      align-items: center;
-    }
+button {
+  transition:transform .2s,filter .2s;
+}
 
-    .bio-box {
-      background: #1a0814;
-      border: 2px solid var(--gold);
-      border-radius: 16px;
-      padding: 30px;
-      text-align: center;
-      max-width: 340px;
-      width: 90%;
-      box-shadow: 0 0 25px rgba(212, 175, 55, 0.5);
-    }
+button:active {transform:scale(.96)}
 
-    .fingerprint-icon {
-      font-size: 4rem;
-      margin: 15px 0;
-      cursor: pointer;
-      display: inline-block;
-      animation: pulse 1.8s infinite;
-    }
+/* WORLD ONE */
 
-    @keyframes pulse {
-      0% { transform: scale(1); filter: drop-shadow(0 0 5px var(--primary-pink)); }
-      50% { transform: scale(1.1); filter: drop-shadow(0 0 20px var(--primary-pink)); }
-      100% { transform: scale(1); filter: drop-shadow(0 0 5px var(--primary-pink)); }
-    }
+#w1 {
+  background:
+    radial-gradient(ellipse at top,#315943 0%,#193c2d 50%,#0e2118 100%);
+  color:#fff4df;
+  padding-bottom:60px;
+  position:relative;
+  overflow:hidden;
+}
 
-    .pin-input {
-      width: 80%;
-      padding: 10px;
-      text-align: center;
-      font-size: 1.2rem;
-      letter-spacing: 5px;
-      border-radius: 8px;
-      border: 1px solid var(--gold);
-      background: #000;
-      color: #fff;
-      margin-top: 15px;
-    }
+.w1-header {
+  padding:18px 22px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-bottom:1px solid var(--gold);
+  background:#10291ecb;
+  position:relative;
+  z-index:2;
+}
 
-    .submit-pin {
-      background: var(--gold);
-      color: #000;
-      border: none;
-      font-weight: bold;
-      padding: 8px 20px;
-      margin-top: 10px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
+.w1-header span {
+  font-size:2rem;
+  cursor:pointer;
+  filter:drop-shadow(0 0 8px #e9bd8b);
+}
 
-    /* --- WORLD 2: TANTRA GOTHIC REALM --- */
-    #world-2 {
-      background: radial-gradient(circle, #200000 0%, #050000 100%);
-      color: #ffcccc;
-    }
+.brand {
+  font-family:'Cinzel',serif;
+  color:#e8cf9a;
+  text-align:center;
+  font-size:1.1rem;
+  letter-spacing:3px;
+}
 
-    .w2-header {
-      text-align: center;
-      padding: 20px;
-      border-bottom: 2px solid var(--crimson);
-    }
+.hero {
+  min-height:350px;
+  padding:55px 20px;
+  text-align:center;
+  display:flex;
+  justify-content:center;
+  flex-direction:column;
+  align-items:center;
+  background:
+    linear-gradient(#10291e55,#10291eaa),
+    radial-gradient(ellipse,#66805c,#193c2d 70%);
+}
 
-    .w2-header h1 {
-      font-size: 2.2rem;
-      color: #ff3333;
-      text-shadow: 0 0 15px #ff0000;
-      letter-spacing: 2px;
-    }
+.hero .crown {font-size:3rem}
 
-    .idol-container { text-align: center; margin: 30px 0; }
-    .idol-container img {
-      max-width: 280px;
-      width: 80%;
-      border-radius: 15px;
-      border: 2px solid var(--crimson);
-      box-shadow: 0 0 30px rgba(255, 0, 0, 0.6);
-    }
+.hero h1 {
+  font-family:'Cinzel',serif;
+  font-size:clamp(2.3rem,7vw,4rem);
+  color:#f0d8a8;
+  margin:12px 0;
+  text-shadow:0 3px 15px #000;
+}
 
-    .shringar-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-      max-width: 1100px;
-      margin: 30px auto;
-    }
+.hero p {
+  font-size:1.3rem;
+  color:#f5dbe0;
+  letter-spacing:2px;
+}
 
-    .shringar-card {
-      background: rgba(40, 0, 0, 0.6);
-      border: 1px solid var(--crimson);
-      border-radius: 10px;
-      padding: 15px;
-      box-shadow: 0 0 10px rgba(153, 0, 0, 0.4);
-    }
+.decorative-line {
+  color:#d8b978;
+  font-size:1.6rem;
+  text-align:center;
+  margin:15px;
+}
 
-    .shringar-card h3 {
-      color: #ff4d4d;
-      margin-bottom: 8px;
-      font-size: 1.3rem;
-      border-bottom: 1px dashed var(--crimson);
-      padding-bottom: 5px;
-    }
+.gallery {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:22px;
+  max-width:1100px;
+  margin:auto;
+  padding:15px;
+}
 
-    .shringar-card textarea, .shringar-card input[type="text"] {
-      width: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      border: 1px solid #660000;
-      color: #ffcccc;
-      padding: 8px;
-      margin-top: 6px;
-      border-radius: 5px;
-    }
+.memory-card {
+  background:linear-gradient(145deg,#e7d8b6,#fff5e2);
+  color:#344333;
+  border-radius:8px;
+  padding:12px;
+  box-shadow:0 12px 30px #0005;
+  transition:transform .3s;
+}
 
-    .shringar-img-preview {
-      width: 100%;
-      height: 160px;
-      object-fit: cover;
-      border-radius: 6px;
-      margin: 8px 0;
-      background: #110000;
-    }
+.memory-card:hover {transform:translateY(-5px)}
 
-    .revoke-btn {
-      display: block;
-      margin: 40px auto 20px auto;
-      background: #cc0000;
-      color: #fff;
-      border: none;
-      padding: 12px 30px;
-      font-size: 1rem;
-      font-weight: bold;
-      border-radius: 30px;
-      cursor: pointer;
-      box-shadow: 0 0 15px rgba(204, 0, 0, 0.8);
-    }
+.memory-card h3 {
+  text-align:center;
+  font-family:'Cinzel',serif;
+  font-size:1.25rem;
+  padding:10px;
+  color:#38503b;
+}
 
-    .petal {
-      position: fixed;
-      background: #e91e63;
-      border-radius: 15px 0 15px 0;
-      opacity: 0.7;
-      pointer-events: none;
-      z-index: 1000;
-      animation: fall linear infinite;
-    }
+.photo-frame {
+  width:100%;
+  height:280px;
+  overflow:hidden;
+  background:#c5c8ae;
+  position:relative;
+  border:5px solid #fff8e9;
+}
 
-    @keyframes fall {
-      0% { transform: translateY(-10vh) rotate(0deg); }
-      100% { transform: translateY(110vh) rotate(360deg); }
-    }
-  </style>
+.photo-frame img {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.photo-controls {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:8px 0;
+  color:#43523c;
+}
+
+.photo-controls button {
+  background:#385b43;
+  color:white;
+  border:0;
+  border-radius:50%;
+  width:35px;
+  height:35px;
+}
+
+.photo-count {font-size:.9rem}
+
+.upload-btn {
+  display:inline-block;
+  padding:9px 15px;
+  background:#385b43;
+  color:white;
+  border:0;
+  border-radius:20px;
+  margin-top:10px;
+  font-size:.95rem;
+}
+
+.memory-card .upload-btn {
+  display:block;
+  margin:10px auto;
+}
+
+input[type=file] {display:none}
+
+/* ROYAL CARDS */
+
+.royal-section {padding:20px 15px}
+
+.royal-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:20px;
+  max-width:850px;
+  margin:auto;
+}
+
+.royal-card {
+  min-height:190px;
+  border:2px solid #d8b978;
+  border-radius:12px;
+  padding:25px 15px;
+  text-align:center;
+  background:linear-gradient(145deg,#f6e7c8,#d3b88b);
+  color:#3b3826;
+  box-shadow:0 8px 20px #0004;
+}
+
+.royal-card .symbol {font-size:3rem}
+.royal-card h3 {
+  font-family:'Cinzel',serif;
+  margin:10px;
+}
+
+/* LOVE NOTE */
+
+.note-section {
+  max-width:750px;
+  margin:50px auto;
+  padding:20px;
+}
+
+.note-paper {
+  background:#fff0d5;
+  color:#4a352b;
+  padding:25px;
+  border-radius:5px;
+  box-shadow:0 10px 30px #0005;
+  transform:rotate(-.5deg);
+}
+
+.note-paper h2 {
+  text-align:center;
+  font-family:'Cinzel',serif;
+  margin-bottom:15px;
+}
+
+.note-paper textarea {
+  width:100%;
+  min-height:170px;
+  padding:15px;
+  resize:vertical;
+  border:1px solid #c4a77c;
+  background:#fff9eb;
+  color:#443126;
+  font-size:1.15rem;
+  outline:none;
+}
+
+.note-paper button {
+  display:block;
+  margin:15px auto 0;
+  background:#385b43;
+  color:white;
+  padding:10px 25px;
+  border:0;
+  border-radius:20px;
+}
+
+.save-status {
+  text-align:center;
+  margin-top:10px;
+  color:#385b43;
+}
+
+footer {
+  text-align:center;
+  padding:30px;
+  color:#e4cfa6;
+  border-top:1px solid #c9a45b66;
+}
+
+/* FLOWERS */
+
+.petal {
+  position:fixed;
+  top:-30px;
+  z-index:5;
+  pointer-events:none;
+  animation:fall linear forwards;
+}
+
+@keyframes fall {
+  to {transform:translateY(110vh) rotate(700deg);opacity:0}
+}
+
+.sparkle {
+  position:fixed;
+  pointer-events:none;
+  color:#ffe9a6;
+  z-index:6;
+  animation:twinkle 2s ease-in-out infinite alternate;
+}
+
+@keyframes twinkle {
+  from {opacity:.2;transform:scale(.6)}
+  to {opacity:1;transform:scale(1.3)}
+}
+
+/* WORLD TWO */
+
+#w2 {
+  background:
+    radial-gradient(ellipse at top,#3b080d 0%,#180308 50%,#050204 100%);
+  color:#f4d2cb;
+  padding-bottom:60px;
+  position:relative;
+}
+
+.w2-header {
+  text-align:center;
+  padding:35px 15px;
+  border-bottom:1px solid #8d151d;
+  background:#160408cc;
+}
+
+.w2-header h1 {
+  font-family:'Cinzel',serif;
+  color:#e65b61;
+  font-size:clamp(1.8rem,6vw,3rem);
+  text-shadow:0 0 20px #e00020;
+  letter-spacing:3px;
+}
+
+.w2-header p {
+  color:#c47b7b;
+  margin-top:12px;
+  letter-spacing:2px;
+}
+
+.moon {
+  width:115px;
+  height:115px;
+  border-radius:50%;
+  margin:25px auto 5px;
+  background:radial-gradient(circle at 35% 35%,#ffb1a1,#a41b25 60%,#4b0008);
+  box-shadow:0 0 45px #be102d88;
+  animation:moonGlow 4s infinite alternate;
+}
+
+@keyframes moonGlow {
+  to {box-shadow:0 0 70px #f00a}
+}
+
+.snake-symbol {
+  font-size:2rem;
+  letter-spacing:15px;
+  text-align:center;
+  color:#bd3439;
+  margin:15px;
+}
+
+.idol-container {
+  text-align:center;
+  max-width:500px;
+  margin:30px auto;
+  padding:15px;
+}
+
+.idol-container img {
+  width:80%;
+  max-width:300px;
+  max-height:450px;
+  object-fit:contain;
+  border:2px solid #a51826;
+  border-radius:8px;
+  box-shadow:0 0 30px #b0002255;
+}
+
+.idol-container h2 {
+  font-family:'Cinzel',serif;
+  color:#e05a61;
+  margin-bottom:15px;
+}
+
+.w2-upload {
+  background:#77101b;
+  color:white;
+  border:1px solid #c33;
+  border-radius:20px;
+  padding:10px 18px;
+  margin-top:15px;
+}
+
+.shringar-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:18px;
+  max-width:1200px;
+  margin:30px auto;
+  padding:15px;
+}
+
+.shringar-card {
+  background:linear-gradient(145deg,#26080d,#130509);
+  border:1px solid #76212b;
+  border-radius:10px;
+  padding:16px;
+  box-shadow:0 5px 20px #0008;
+}
+
+.shringar-card h3 {
+  font-family:'Tiro Devanagari Hindi',serif;
+  color:#ed7779;
+  font-size:1.4rem;
+  border-bottom:1px solid #79232a;
+  padding-bottom:10px;
+  margin-bottom:12px;
+}
+
+.shringar-card .number {
+  color:#9b7770;
+  font-size:.9rem;
+  margin-right:5px;
+}
+
+.shringar-gallery {
+  height:185px;
+  background:#100407;
+  position:relative;
+  overflow:hidden;
+  border-radius:6px;
+}
+
+.shringar-gallery img {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.shringar-gallery .photo-controls {
+  position:absolute;
+  bottom:5px;
+  left:5px;
+  right:5px;
+  color:white;
+}
+
+.shringar-gallery .photo-controls button {
+  background:#3a080eeb;
+  border:1px solid #a34;
+}
+
+.shringar-card label {
+  display:block;
+  color:#ce7777;
+  font-size:.95rem;
+  margin-top:12px;
+}
+
+.shringar-card input[type=text],
+.shringar-card textarea {
+  width:100%;
+  margin-top:5px;
+  padding:10px;
+  background:#100407;
+  color:#f5d7d7;
+  border:1px solid #63202a;
+  border-radius:5px;
+  outline:none;
+}
+
+.shringar-card textarea {
+  min-height:100px;
+  resize:vertical;
+}
+
+.w2-upload.small {
+  padding:7px 12px;
+  font-size:.9rem;
+}
+
+.lock-btn {
+  display:block;
+  margin:40px auto 20px;
+  padding:13px 35px;
+  background:#690b17;
+  border:1px solid #d54a53;
+  border-radius:30px;
+  color:white;
+  font-family:'Cinzel',serif;
+}
+
+/* SECRET PIN MODAL */
+
+#pin-modal {
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:2000;
+  background:#080207ed;
+  justify-content:center;
+  align-items:center;
+  padding:15px;
+}
+
+.pin-box {
+  width:100%;
+  max-width:350px;
+  background:#1b080e;
+  border:1px solid #b98a50;
+  border-radius:15px;
+  padding:30px 20px;
+  text-align:center;
+  box-shadow:0 0 40px #a0003155;
+}
+
+.pin-box h2 {
+  font-family:'Cinzel',serif;
+  color:#e6b46e;
+}
+
+.pin-box p {color:#c58e8e;margin:12px 0}
+
+.pin-box input {
+  width:85%;
+  background:#090205;
+  border:1px solid #8f3945;
+  padding:13px;
+  color:white;
+  border-radius:6px;
+  text-align:center;
+  letter-spacing:8px;
+  font-size:1.5rem;
+  margin:15px;
+}
+
+.pin-box button {
+  background:#a21b2a;
+  color:white;
+  padding:11px 25px;
+  border:0;
+  border-radius:20px;
+}
+
+.close-pin {
+  display:block;
+  margin:15px auto 0;
+  background:transparent !important;
+  color:#bd9292 !important;
+}
+
+/* MOBILE */
+
+@media(max-width:600px) {
+  .gallery {grid-template-columns:1fr}
+  .photo-frame {height:300px}
+  .w1-header {padding:12px}
+  .brand {font-size:.8rem}
+  .w1-header span {font-size:1.6rem}
+  .shringar-grid {grid-template-columns:1fr}
+}
+</style>
 </head>
+
 <body>
 
-  <!-- BOUGAINVILLEA CURTAIN ENTRY -->
-  <div id="curtain-wrapper" onclick="openCurtain()">
-    <div class="curtain-half curtain-left"></div>
-    <div class="curtain-half curtain-right"></div>
-    <div class="curtain-text">
-      <h1>🌸 WELCOME 🌸</h1>
-      <p>Tap anywhere to step inside</p>
-    </div>
+<!-- FLOWER ENTRANCE -->
+
+<div id="entrance" onclick="openEntrance()">
+  <div class="flower-half left">
+    <div class="flower-art one">🌺 🌿 🌸</div>
+    <div class="flower-art two">🌸 🌿</div>
+    <div class="flower-art three">🌺 🌸 🌿</div>
+    <div class="flower-art four">🌿 🌺</div>
   </div>
 
-  <!-- WORLD 1: HER REALM -->
-  <div id="world-1" class="realm">
-    <header class="w1-header">
-      <div class="motif-card" onclick="registerTap(1)">♔</div>
-      <div class="center-flower" onclick="registerTap(2)">🌺</div>
-      <div class="motif-card" onclick="registerTap(3)">♕</div>
-    </header>
-
-    <h2 class="section-title">✨ Our Memories & Gifts ✨</h2>
-
-    <div class="grid-gallery">
-      <!-- Card 1: Her Photos -->
-      <div class="card">
-        <h3>Queen of My Heart</h3>
-        <div class="slider-container" id="slider-her">
-          <img src="https://via.placeholder.com/300x220/880e4f/ffffff?text=Upload+Her+Photos" alt="Her Photo">
-        </div>
-        <button class="upload-btn" onclick="triggerFile('file-her')">+ Add / Change Photos</button>
-        <input type="file" id="file-her" accept="image/*" multiple style="display:none" onchange="handleMultipleUpload(this, 'her')">
-      </div>
-
-      <!-- Card 2: Us Together -->
-      <div class="card">
-        <h3>Together Forever</h3>
-        <div class="slider-container" id="slider-us">
-          <img src="https://via.placeholder.com/300x220/880e4f/ffffff?text=Upload+Our+Photos" alt="Us Together">
-        </div>
-        <button class="upload-btn" onclick="triggerFile('file-us')">+ Add / Change Photos</button>
-        <input type="file" id="file-us" accept="image/*" multiple style="display:none" onchange="handleMultipleUpload(this, 'us')">
-      </div>
-
-      <!-- Card 3: Gifts -->
-      <div class="card">
-        <h3>Gifts of Love</h3>
-        <div class="slider-container" id="slider-gift">
-          <img src="https://via.placeholder.com/300x220/880e4f/ffffff?text=Upload+Gift+Photos" alt="Gift">
-        </div>
-        <button class="upload-btn" onclick="triggerFile('file-gift')">+ Add / Change Photos</button>
-        <input type="file" id="file-gift" accept="image/*" multiple style="display:none" onchange="handleMultipleUpload(this, 'gift')">
-      </div>
-    </div>
-
-    <!-- SECRET LOVE NOTE FOR HER -->
-    <div class="love-note-box">
-      <h3 style="color: var(--gold);">💌 A Secret Note For You</h3>
-      <textarea id="love-note-input" placeholder="Write your heartfelt note here... It saves automatically!" onkeyup="saveLoveNote(this.value)"></textarea>
-    </div>
+  <div class="flower-half right">
+    <div class="flower-art one">🌸 🌿 🌺</div>
+    <div class="flower-art two">🌿 🌺</div>
+    <div class="flower-art three">🌸 🌺 🌿</div>
+    <div class="flower-art four">🌺 🌿</div>
   </div>
 
-  <!-- HIDDEN BIOMETRIC MODAL -->
-  <div id="bio-modal">
-    <div class="bio-box">
-      <h3 style="color: var(--gold);">SECRET ENTRY</h3>
-      <p style="font-size: 0.85rem; color: #ccc; margin-top: 5px;">Biometric Verification Required</p>
-      
-      <div class="fingerprint-icon" onclick="unlockWorld2()">☝️</div>
-      <p style="font-size: 0.75rem; color: #aaa;">Tap icon to scan fingerprint</p>
+  <div class="entrance-title">
+    <h1>2 WORLDS</h1>
+    <p>✦ Two realms. One story. ✦</p>
+    <p style="font-size:1rem;margin-top:35px;">
+      Touch the flowers to enter
+    </p>
+  </div>
+</div>
 
-      <div style="margin-top: 15px; border-top: 1px solid #444; padding-top: 10px;">
-        <p style="font-size: 0.8rem; color: var(--gold);">Or enter Secret PIN:</p>
-        <input type="password" id="pin-field" class="pin-input" maxlength="4" placeholder="••••">
-        <br>
-        <button class="submit-pin" onclick="verifyPin()">UNLOCK</button>
-      </div>
+<!-- WORLD ONE -->
+
+<section id="w1" class="world">
+
+<header class="w1-header">
+  <span onclick="registerTap(1)">♔</span>
+  <div class="brand">A TALE OF TWO WORLDS</div>
+  <span onclick="registerTap(2)">🌺</span>
+  <span onclick="registerTap(3)">♕</span>
+</header>
+
+<div class="hero">
+  <div class="crown">♔ ❀ ♕</div>
+  <h1>Her Royal Garden</h1>
+  <p>A little world made just for you</p>
+  <div class="decorative-line">❧ ✿ ❧</div>
+</div>
+
+<h2 class="section-title">Our Little Universe</h2>
+<p class="sub-title">Every photograph holds a memory.</p>
+
+<div class="gallery">
+
+  <div class="memory-card">
+    <h3>🌷 Queen of My Heart</h3>
+    <div class="photo-frame" id="slider-her">
+      <img src="https://placehold.co/500x600/526d51/fff4df?text=Her+Memories" alt="Her memories">
     </div>
+    <div class="photo-controls">
+      <button onclick="changeSlide('her',-1)">❮</button>
+      <span class="photo-count" id="count-her">0 photos</span>
+      <button onclick="changeSlide('her',1)">❯</button>
+    </div>
+    <input type="file" id="file-her" accept="image/*" multiple onchange="uploadPhotos(this,'her')">
+    <button class="upload-btn" onclick="pickFile('file-her')">＋ Add Her Photos</button>
   </div>
 
-  <!-- WORLD 2: GOTHIC SECRET REALM -->
-  <div id="world-2" class="realm">
-    <header class="w2-header">
-      <h1>🌑 16 SOLAH SHRINGAR 🐍</h1>
-      <p style="color: #aa4444; font-size: 0.9rem;">Protected Master Realm</p>
-    </header>
-
-    <div class="idol-container">
-      <img id="idol-img" src="https://via.placeholder.com/300x400/330000/ff3333?text=Tantric+Idol" alt="Sacred Idol">
-      <br>
-      <button class="upload-btn" style="background:#660000; margin-top:10px;" onclick="triggerFile('file-idol')">Upload Sacred Idol Photo</button>
-      <input type="file" id="file-idol" accept="image/*" style="display:none" onchange="loadSingleImg(this, 'idol-img', 'save_idol-img')">
+  <div class="memory-card">
+    <h3>💗 Together Forever</h3>
+    <div class="photo-frame" id="slider-us">
+      <img src="https://placehold.co/500x600/526d51/fff4df?text=Our+Memories" alt="Our memories">
     </div>
-
-    <div class="shringar-grid" id="shringar-container"></div>
-
-    <button class="revoke-btn" onclick="revokeAccess()">🔒 PERMANENTLY REVOKE ACCESS</button>
+    <div class="photo-controls">
+      <button onclick="changeSlide('us',-1)">❮</button>
+      <span class="photo-count" id="count-us">0 photos</span>
+      <button onclick="changeSlide('us',1)">❯</button>
+    </div>
+    <input type="file" id="file-us" accept="image/*" multiple onchange="uploadPhotos(this,'us')">
+    <button class="upload-btn" onclick="pickFile('file-us')">＋ Add Our Photos</button>
   </div>
 
-  <script>
-    // --- 1. CURTAIN CONTROLLER ---
-    function openCurtain() {
-      const curtain = document.getElementById('curtain-wrapper');
-      curtain.classList.add('open');
-      setTimeout(() => {
-        curtain.style.display = 'none';
-        document.getElementById('world-1').classList.add('active');
-        spawnPetals();
-      }, 1500);
+  <div class="memory-card">
+    <h3>🎁 Gifts of Love</h3>
+    <div class="photo-frame" id="slider-gift">
+      <img src="https://placehold.co/500x600/526d51/fff4df?text=Our+Gifts" alt="Our gifts">
+    </div>
+    <div class="photo-controls">
+      <button onclick="changeSlide('gift',-1)">❮</button>
+      <span class="photo-count" id="count-gift">0 photos</span>
+      <button onclick="changeSlide('gift',1)">❯</button>
+    </div>
+    <input type="file" id="file-gift" accept="image/*" multiple onchange="uploadPhotos(this,'gift')">
+    <button class="upload-btn" onclick="pickFile('file-gift')">＋ Add Gift Photos</button>
+  </div>
+
+</div>
+
+<div class="decorative-line">✿ ❧ ✿ ❧ ✿</div>
+
+<section class="royal-section">
+  <h2 class="section-title">The Royal Collection</h2>
+  <p class="sub-title">A queen deserves her own kingdom.</p>
+
+  <div class="royal-grid">
+    <div class="royal-card">
+      <div class="symbol">♔</div>
+      <h3>The King</h3>
+      <p>The one who keeps this little kingdom alive.</p>
+    </div>
+
+    <div class="royal-card">
+      <div class="symbol">♕</div>
+      <h3>The Queen</h3>
+      <p>The heart of this beautiful little universe.</p>
+    </div>
+
+    <div class="royal-card">
+      <div class="symbol">🌿</div>
+      <h3>The Garden</h3>
+      <p>Where every flower keeps a memory.</p>
+    </div>
+  </div>
+</section>
+
+<section class="note-section">
+  <div class="note-paper">
+    <h2>💌 A Letter For You</h2>
+    <p style="text-align:center;margin-bottom:12px;">
+      Some words deserve their own little space.
+    </p>
+
+    <textarea id="love-note"
+      placeholder="Write your letter here..."></textarea>
+
+    <button onclick="saveNote()">Save My Letter</button>
+    <p class="save-status" id="note-status">
+      Your letter is not saved yet.
+    </p>
+  </div>
+</section>
+
+<footer>
+  <div style="font-size:2rem;">❀ ♔ ❀ ♕ ❀</div>
+  <p>Made with memories, flowers and a little magic.</p>
+  <p style="margin-top:8px;">2 WORLDS · EST. 2026</p>
+</footer>
+
+</section>
+
+<!-- PIN MODAL -->
+
+<div id="pin-modal">
+  <div class="pin-box">
+    <h2>THE SECRET SANCTUM</h2>
+    <div style="font-size:3rem;margin:15px;">🐍</div>
+    <p>Three symbols have opened the gate.</p>
+    <p>Enter the secret code.</p>
+
+    <input type="password"
+      id="pin-input"
+      maxlength="4"
+      inputmode="numeric"
+      placeholder="••••">
+
+    <br>
+    <button onclick="checkPin()">ENTER THE REALM</button>
+    <button class="close-pin"
+      onclick="closePin()">Return to the Garden</button>
+    <p id="pin-error"></p>
+  </div>
+</div>
+
+<!-- WORLD TWO -->
+
+<section id="w2" class="world">
+
+<header class="w2-header">
+  <div class="snake-symbol">🐍 ☾ 🐍</div>
+  <h1>THE SECRET SANCTUM</h1>
+  <p>।। षोडश श्रृंगार ।।</p>
+  <div class="moon"></div>
+  <p>Sixteen adornments · Sixteen mysteries</p>
+</header>
+
+<div class="idol-container">
+  <h2>THE SACRED PRESENCE</h2>
+  <img id="idol-img"
+    src="https://placehold.co/500x650/25050b/dc555d?text=Sacred+Idol"
+    alt="Sacred idol">
+  <br>
+  <input type="file" id="idol-file" accept="image/*"
+    onchange="uploadIdol(this)">
+  <button class="w2-upload"
+    onclick="pickFile('idol-file')">＋ Upload Idol Photograph</button>
+</div>
+
+<div class="snake-symbol">♆ 🐍 ♆</div>
+
+<h2 class="section-title"
+style="color:#e66b70;font-family:'Tiro Devanagari Hindi',serif;">
+।। षोडश श्रृंगार ।।
+</h2>
+
+<p class="sub-title" style="color:#d6a1a1;">
+Sixteen adornments, each with its own story.
+</p>
+
+<div class="shringar-grid" id="shringar-grid"></div>
+
+<button class="lock-btn" onclick="lockWorld()">
+🔒 LOCK THE SECRET SANCTUM
+</button>
+
+<footer style="color:#c27c7c;">
+  <p>🐍 ☾ The secrets remain within the sanctum ☾ 🐍</p>
+</footer>
+
+</section>
+
+<script>
+
+/* BASIC SETTINGS */
+
+const MASTER_PIN = "4078";
+
+let tapSequence = [];
+let photos = {her:[],us:[],gift:[]};
+let indices = {her:0,us:0,gift:0};
+
+/* FLOWER ENTRANCE */
+
+function openEntrance() {
+  const entrance = document.getElementById("entrance");
+  entrance.classList.add("open");
+
+  setTimeout(() => {
+    entrance.style.display = "none";
+    document.getElementById("w1").classList.add("active");
+    startPetals();
+    startSparkles();
+  }, 1900);
+}
+
+/* SECRET THREE SYMBOL ENTRY */
+
+function registerTap(number) {
+  tapSequence.push(number);
+
+  if(tapSequence.length === 3) {
+    if(tapSequence.join("") === "123") {
+      document.getElementById("pin-modal").style.display = "flex";
+      document.getElementById("pin-input").focus();
+    }
+    tapSequence = [];
+  }
+}
+
+function checkPin() {
+  const value = document.getElementById("pin-input").value;
+
+  if(value === MASTER_PIN) {
+    document.getElementById("pin-modal").style.display = "none";
+    document.getElementById("pin-input").value = "";
+
+    document.getElementById("w1").classList.remove("active");
+    document.getElementById("w2").classList.add("active");
+
+    startPetals();
+    startSparkles();
+    window.scrollTo(0,0);
+  } else {
+    document.getElementById("pin-error").textContent =
+      "Incorrect code. The gate remains closed.";
+    document.getElementById("pin-input").value = "";
+  }
+}
+
+function closePin() {
+  document.getElementById("pin-modal").style.display = "none";
+  document.getElementById("pin-input").value = "";
+  document.getElementById("pin-error").textContent = "";
+}
+
+function lockWorld() {
+  document.getElementById("w2").classList.remove("active");
+  document.getElementById("w1").classList.add("active");
+  window.scrollTo(0,0);
+}
+
+/* PHOTO STORAGE */
+
+function pickFile(id) {
+  document.getElementById(id).click();
+}
+
+function saveData(key,value) {
+  try {
+    localStorage.setItem(key,value);
+  } catch(error) {
+    alert("Browser storage is full. Try using smaller photos.");
+  }
+}
+
+function uploadPhotos(input,category) {
+  const files = Array.from(input.files || []);
+  if(!files.length) return;
+
+  let loaded = 0;
+  let newPhotos = [];
+
+  files.forEach(file => {
+    if(!file.type.startsWith("image/")) {
+      loaded++;
+      return;
     }
 
-    // --- 2. SECRET TAP CIPHER (King -> Flower -> Queen) ---
-    let tapSequence = [];
-    function registerTap(step) {
-      tapSequence.push(step);
-      if (tapSequence.length === 3) {
-        if (tapSequence[0] === 1 && tapSequence[1] === 2 && tapSequence[2] === 3) {
-          document.getElementById('bio-modal').style.display = 'flex';
-        }
-        tapSequence = [];
+    const reader = new FileReader();
+
+    reader.onload = event => {
+      newPhotos.push(event.target.result);
+      loaded++;
+
+      if(loaded === files.length) {
+        photos[category] = photos[category].concat(newPhotos);
+        saveData("world_photos_"+category,
+          JSON.stringify(photos[category]));
+        indices[category] = 0;
+        renderSlider(category);
+        input.value = "";
       }
-    }
-
-    // --- 3. BIOMETRICS & PIN ---
-    function verifyPin() {
-      const pin = document.getElementById('pin-field').value;
-      const storedPin = localStorage.getItem('master_pin') || '1608';
-      if (pin === storedPin) {
-        unlockWorld2();
-      } else {
-        alert("Incorrect PIN!");
-      }
-    }
-
-    function unlockWorld2() {
-      document.getElementById('bio-modal').style.display = 'none';
-      document.getElementById('world-1').classList.remove('active');
-      document.getElementById('world-2').classList.add('active');
-    }
-
-    function revokeAccess() {
-      if (confirm("Are you sure you want to lock and revoke access?")) {
-        localStorage.setItem('revoked', 'true');
-        location.reload();
-      }
-    }
-
-    if (localStorage.getItem('revoked') === 'true') {
-      document.body.innerHTML = "<h1 style='color:red; text-align:center; margin-top:20vh;'>PORTAL PERMANENTLY CLOSED</h1>";
-    }
-
-    // --- 4. MULTI-PHOTO SLIDER SYSTEM ---
-    let slidersData = {
-      her: JSON.parse(localStorage.getItem('photos_her')) || [],
-      us: JSON.parse(localStorage.getItem('photos_us')) || [],
-      gift: JSON.parse(localStorage.getItem('photos_gift')) || []
     };
 
-    let currentIndices = { her: 0, us: 0, gift: 0 };
-
-    function triggerFile(id) {
-      document.getElementById(id).click();
-    }
-
-    function handleMultipleUpload(input, category) {
-      if (input.files && input.files.length > 0) {
-        let loadedCount = 0;
-        let newImages = [];
-        Array.from(input.files).forEach(file => {
-          const reader = new FileReader();
-          reader.onload = function(e) {
-            newImages.push(e.target.result);
-            loadedCount++;
-            if (loadedCount === input.files.length) {
-              slidersData[category] = newImages; // Replace or append as desired
-              localStorage.setItem('photos_' + category, JSON.stringify(slidersData[category]));
-              currentIndices[category] = 0;
-              renderSlider(category);
-            }
-          }
-          reader.readAsDataURL(file);
-        });
+    reader.onerror = () => {
+      loaded++;
+      if(loaded === files.length) {
+        photos[category] = photos[category].concat(newPhotos);
+        saveData("world_photos_"+category,
+          JSON.stringify(photos[category]));
+        renderSlider(category);
       }
-    }
-
-    function renderSlider(category) {
-      const container = document.getElementById('slider-' + category);
-      const images = slidersData[category];
-      if (images.length === 0) return;
-
-      let idx = currentIndices[category];
-      container.innerHTML = `
-        <img src="${images[idx]}" alt="Memory">
-        ${images.length > 1 ? `
-          <button class="slider-btn slider-prev" onclick="changeSlide('${category}', -1)">❮</button>
-          <button class="slider-btn slider-next" onclick="changeSlide('${category}', 1)">❯</button>
-        ` : ''}
-      `;
-    }
-
-    function changeSlide(category, direction) {
-      const images = slidersData[category];
-      if (images.length === 0) return;
-      currentIndices[category] += direction;
-      if (currentIndices[category] < 0) currentIndices[category] = images.length - 1;
-      if (currentIndices[category] >= images.length) currentIndices[category] = 0;
-      renderSlider(category);
-    }
-
-    // --- 5. LOVE NOTE STORAGE ---
-    function saveLoveNote(text) {
-      localStorage.setItem('secret_love_note', text);
-    }
-
-    // --- 6. SINGLE IMAGE UPLOADER (For Idol) ---
-    function loadSingleImg(input, targetId, storageKey) {
-      if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          document.getElementById(targetId).src = e.target.result;
-          localStorage.setItem(storageKey, e.target.result);
-        }
-        reader.readAsDataURL(input.files[0]);
-      }
-    }
-
-    // --- INITIALIZE ON LOAD ---
-    window.onload = function() {
-      // Render sliders
-      ['her', 'us', 'gift'].forEach(cat => {
-        if (slidersData[cat].length > 0) renderSlider(cat);
-      });
-
-      // Load Love Note
-      const savedNote = localStorage.getItem('secret_love_note');
-      if (savedNote) document.getElementById('love-note-input').value = savedNote;
-
-      // Load Idol Image
-      const savedIdol = localStorage.getItem('save_idol-img');
-      if (savedIdol) document.getElementById('idol-img').src = savedIdol;
-
-      renderShringars();
     };
 
-    // --- 7. 16 SHRINGAR LIST GENERATOR ---
-    const shringarItems = [
-      "1. हल्दी (Haldi)", "2. बिछिया (Bichhiya)", "3. पायल (Payal)", "4. मेहंदी (Mehendi)",
-      "5. अलसी (Alsi)", "6. ब्रेसलेट (Bracelet)", "7. इत्र (Ittar)", "8. कमर बंद (Kamarbandh)",
-      "9. कटार (Katar)", "10. हार (Haar)", "11. काला टीका (Kala Teeka)", "12. कान के (Karnphool)",
-      "13. बिंदी (Bindi)", "14. तेल (Tel)", "15. काजल (Kajal)", "16. सिन्दूर (Sindoor)"
-    ];
+    reader.readAsDataURL(file);
+  });
+}
 
-    function renderShringars() {
-      const container = document.getElementById('shringar-container');
-      shringarItems.forEach((item, index) => {
-        const card = document.createElement('div');
-        card.className = 'shringar-card';
-        
-        const imgKey = 'shringar_img_' + index;
-        const textKey = 'shringar_text_' + index;
-        const nameKey = 'shringar_name_' + index;
+function renderSlider(category) {
+  const container = document.getElementById("slider-"+category);
+  const count = document.getElementById("count-"+category);
+  const list = photos[category];
 
-        const savedImg = localStorage.getItem(imgKey) || 'https://via.placeholder.com/280x160/220000/ff6666?text=' + encodeURIComponent(item);
-        const savedText = localStorage.getItem(textKey) || '';
-        const savedName = localStorage.getItem(nameKey) || '';
+  if(!list.length) return;
 
-        card.innerHTML = `
-          <h3>${item}</h3>
-          <img id="${imgKey}_preview" class="shringar-img-preview" src="${savedImg}">
-          <button class="upload-btn" style="background:#550000;" onclick="triggerFile('${imgKey}_file')">Change Item Image</button>
-          <input type="file" id="${imgKey}_file" accept="image/*" style="display:none" onchange="loadSingleImg(this, '${imgKey}_preview', '${imgKey}')">
-          <input type="text" placeholder="Associated Person's Name" value="${savedName}" onkeyup="localStorage.setItem('${nameKey}', this.value)">
-          <textarea rows="3" placeholder="Secret Powers & Mystical Details..." onkeyup="localStorage.setItem('${textKey}', this.value)">${savedText}</textarea>
-        `;
-        container.appendChild(card);
-      });
+  indices[category] = Math.min(indices[category],list.length-1);
+
+  container.innerHTML = "";
+
+  const img = document.createElement("img");
+  img.src = list[indices[category]];
+  img.alt = "Memory photograph";
+  container.appendChild(img);
+
+  count.textContent =
+    (indices[category]+1)+" / "+list.length+" photos";
+}
+
+function changeSlide(category,direction) {
+  if(!photos[category].length) return;
+
+  const length = photos[category].length;
+
+  indices[category] =
+    (indices[category]+direction+length)%length;
+
+  renderSlider(category);
+}
+
+/* LOVE LETTER */
+
+function saveNote() {
+  const text = document.getElementById("love-note").value;
+  saveData("world_love_note",text);
+
+  document.getElementById("note-status").textContent =
+    "✦ Letter saved in this browser ✦";
+}
+
+/* IDOL PHOTO */
+
+function uploadIdol(input) {
+  const file = input.files[0];
+  if(!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = event => {
+    document.getElementById("idol-img").src =
+      event.target.result;
+    saveData("world_idol",event.target.result);
+    input.value = "";
+  };
+
+  reader.readAsDataURL(file);
+}
+
+/* SIXTEEN SHRINGAR */
+
+const shringarItems = [
+"हल्दी",
+"बिछिया",
+"पायल",
+"मेहंदी",
+"अलसी",
+"ब्रेसलेट",
+"इत्र",
+"कमर बंद",
+"कटार",
+"हार",
+"काला टीका",
+"कान के",
+"बिंदी",
+"तेल",
+"काजल",
+"सिंदूर"
+];
+
+function createShringarCards() {
+  const container = document.getElementById("shringar-grid");
+
+  shringarItems.forEach((name,index) => {
+    const number = index+1;
+    const key = "shringar_"+index;
+
+    const card = document.createElement("article");
+    card.className = "shringar-card";
+
+    const heading = document.createElement("h3");
+    heading.innerHTML =
+      '<span class="number">'+String(number).padStart(2,"0")+
+      ' / 16</span> '+name;
+
+    const gallery = document.createElement("div");
+    gallery.className = "shringar-gallery";
+    gallery.id = key+"_gallery";
+
+    const image = document.createElement("img");
+    image.id = key+"_image";
+    image.alt = name;
+    image.src =
+      "https://placehold.co/400x250/26080d/e8a0a0?text="+
+      encodeURIComponent(name);
+
+    gallery.appendChild(image);
+
+    const controls = document.createElement("div");
+    controls.className = "photo-controls";
+
+    const prev = document.createElement("button");
+    prev.textContent = "❮";
+    prev.onclick = () => changeShringarSlide(index,-1);
+
+    const count = document.createElement("span");
+    count.id = key+"_count";
+    count.className = "photo-count";
+    count.textContent = "0 photos";
+
+    const next = document.createElement("button");
+    next.textContent = "❯";
+    next.onclick = () => changeShringarSlide(index,1);
+
+    controls.append(prev,count,next);
+    gallery.appendChild(controls);
+
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.id = key+"_file";
+    fileInput.accept = "image/*";
+    fileInput.multiple = true;
+    fileInput.onchange = () => uploadShringarPhotos(index,fileInput);
+
+    const upload = document.createElement("button");
+    upload.className = "w2-upload small";
+    upload.textContent = "＋ Add Shringar Photos";
+    upload.onclick = () => pickFile(key+"_file");
+
+    const personLabel = document.createElement("label");
+    personLabel.textContent = "Associated Person";
+
+    const person = document.createElement("input");
+    person.type = "text";
+    person.placeholder = "Enter person's name";
+    person.id = key+"_person";
+    person.addEventListener("input",() => {
+      saveData(key+"_person",person.value);
+    });
+
+    const detailLabel = document.createElement("label");
+    detailLabel.textContent = "Powers & Personal Knowledge";
+
+    const details = document.createElement("textarea");
+    details.placeholder =
+      "Write your personal descriptions, meanings, stories and knowledge...";
+    details.id = key+"_details";
+    details.addEventListener("input",() => {
+      saveData(key+"_details",details.value);
+    });
+
+    card.append(
+      heading,gallery,fileInput,upload,
+      personLabel,person,detailLabel,details
+    );
+
+    container.appendChild(card);
+
+    person.value = localStorage.getItem(key+"_person") || "";
+    details.value = localStorage.getItem(key+"_details") || "";
+  });
+}
+
+/* SHRINGAR MULTI-PHOTO STORAGE */
+
+let shringarPhotos = {};
+
+function uploadShringarPhotos(index,input) {
+  const files = Array.from(input.files || []);
+  if(!files.length) return;
+
+  const key = "shringar_"+index;
+
+  if(!shringarPhotos[index]) shringarPhotos[index] = [];
+
+  let loaded = 0;
+  let newPhotos = [];
+
+  files.forEach(file => {
+    if(!file.type.startsWith("image/")) {
+      loaded++;
+      return;
     }
 
-    // --- 8. FLOATING PETALS ANIMATION ---
-    function spawnPetals() {
-      for (let i = 0; i < 20; i++) {
-        const petal = document.cr
+    const reader = new FileReader();
+
+    reader.onload = event => {
+      newPhotos.push(event.target.result);
+      loaded++;
+
+      if(loaded === files.length) {
+        shringarPhotos[index] =
+          shringarPhotos[index].concat(newPhotos);
+
+        saveData(key+"_photos",
+          JSON.stringify(shringarPhotos[index]));
+
+        shringarIndices[index] = 0;
+        renderShringarSlide(index);
+        input.value = "";
+      }
+    };
+
+    reader.onerror = () => {
+      loaded++;
+      if(loaded === files.length) {
+        shringarPhotos[index] =
+          shringarPhotos[index].concat(newPhotos);
+        saveData(key+"_photos",
+          JSON.stringify(shringarPhotos[index]));
+        renderShringarSlide(index);
+      }
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
+let shringarIndices = {};
+
+function renderShringarSlide(index) {
+  const list = shringarPhotos[index] || [];
+  if(!list.length) return;
+
+  const key = "shringar_"+index;
+  const position = shringarIndices[index] || 0;
+
+  document.getElementById(key+"_image").src = list[position];
+  document.getElementById(key+"_count").textContent =
+    (position+1)+" / "+list.length+" photos";
+}
+
+function changeShringarSlide(index,direction) {
+  const list = shringarPhotos[index] || [];
+  if(!list.length) return;
+
+  const length = list.length;
+
+  shringarIndices[index] =
+    ((shringarIndices[index] || 0)+direction+length)%length;
+
+  renderShringarSlide(index);
+}
+
+/* FLOWER PETAL ANIMATION */
+
+function startPetals() {
+  if(window.petalTimer) return;
+
+  window.petalTimer = setInterval(() => {
+    const petal = document.createElement("div");
+    petal.className = "petal";
+    petal.textContent =
+      ["🌸","🌺","❀","🌷","✿"][Math.floor(Math.random()*5)];
+
+    petal.style.left = Math.random()*100+"vw";
+    petal.style.fontSize = (12+Math.random()*18)+"px";
+    petal.style.animationDuration = (7+Math.random()*9)+"s";
+
+    document.body.appendChild(petal);
+
+    setTimeout(() => petal.remove(),17000);
+  },650);
+}
+
+/* SPARKLE ANIMATION */
+
+function startSparkles() {
+  if(window.sparkleTimer) return;
+
+  window.sparkleTimer = setInterval(() => {
+    const sparkle = document.createElement("div");
+    sparkle.className = "sparkle";
+    sparkle.textContent = "✦";
+    sparkle.style.left = Math.random()*100+"vw";
+    sparkle.style.top = Math.random()*100+"vh";
+    sparkle.style.fontSize = (8+Math.random()*12)+"px";
+
+    document.body.appendChild(sparkle);
+
+    setTimeout(() => sparkle.remove(),2500);
+  },900);
+}
+
+/* INITIAL LOAD */
+
+window.addEventListener("load",() => {
+
+  ["her","us","gift"].forEach(category => {
+    try {
+      photos[category] =
+        JSON.parse(localStorage.getItem("world_photos_"+category)) || [];
+    } catch(error) {
+      photos[category] = [];
+    }
+
+    if(photos[category].length) renderSlider(category);
+  });
+
+  document.getElementById("love-note").value =
+    localStorage.getItem("world_love_note") || "";
+
+  const savedIdol = localStorage.getItem("world_idol");
+  if(savedIdol) {
+    document.getElementById("idol-img").src = savedIdol;
+  }
+
+  createShringarCards();
+
+  for(let i=0;i<16;i++) {
+    try {
+      shringarPhotos[i] =
+        JSON.parse(localStorage.getItem("shringar_"+i+"_photos")) || [];
+    } catch(error) {
+      shringarPhotos[i] = [];
+    }
+
+    if(shringarPhotos[i].length) {
+      renderShringarSlide(i);
+    }
+  }
+
+});
+
+</script>
+
+</body>
+</html>
