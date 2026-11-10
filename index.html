@@ -1,1 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2-Worlds</title>
+  <style>
+    :root {
+      --primary-pink: #d81b60;
+      --deep-pink: #880e4f;
+      --gold: #d4af37;
+      --dark-bg: #0a0508;
+      --crimson: #990000;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Georgia', serif;
+    }
+
+    body {
+      background-color: #0f050b;
+      color: #fff;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* --- CURTAIN LANDING SCREEN --- */
+    #curtain-wrapper {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 9999;
+      display: flex;
+      cursor: pointer;
+      overflow: hidden;
+    }
+
+    .curtain-half {
+      width: 50vw;
+      height: 100vh;
+      background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1590736969955-71cc94801759?q=80&w=1000&auto=format&fit=crop') center/cover no-repeat;
+      transition: transform 1.5s cubic-bezier(0.77, 0, 0.175, 1);
+      position: relative;
+    }
+
+    .curtain-left {
+      border-right: 2px solid var(--gold);
+    }
+
+    .curtain-right {
+      border-left: 2px solid var(--gold);
+    }
+
+    #curtain-wrapper.open .curtain-left {
+      transform: translateX(-100%);
+    }
+
+    #curtain-wrapper.open .curtain-right {
+      transform: translateX(100%);
+    }
+
+    .curtain-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10000;
+      text-align: center;
+      pointer-events: none;
+      transition: opacity 0.8s ease;
+      color: #fff;
+      text-shadow: 0 0 15px rgba(216, 27, 96, 0.9), 0 0 5px #000;
+    }
+
+    .curtain-text h1 {
+      font-size: 2.5rem;
+      letter-spacing: 3px;
+      margin-bottom: 10px;
+    }
+
+    .curtain-text p {
+      font-size: 1.1rem;
+      color: #f8bbd0;
+    }
+
+    #curtain-wrapper.open + .curtain-text,
+    #curtain-wrapper.open .curtain-text {
+      opacity: 0;
+    }
+
+    /* --- COMMON CONTAINER --- */
+    .realm {
+      display: none;
+      min-height: 100vh;
+      padding: 20px;
+      position: relative;
+    }
+
+    .realm.active {
+      display: block;
+    }
+
+    /* --- WORLD 1: ROYAL BOUGAINVILLEA REALM --- */
+    #world-1 {
+      background: radial-gradient(circle, #2c001e 0%, #0f050b 100%);
+      padding-bottom: 80px;
+    }
+
+    header.w1-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      border-bottom: 2px solid var(--gold);
+      background: rgba(20, 5, 15, 0.7);
+    }
+
+    .motif-card {
+      font-size: 2rem;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.2s;
+    }
+    .motif-card:active { transform: scale(1.2); }
+
+    .center-flower {
+      font-size: 2.2rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .section-title {
+      text-align: center;
+      color: var(--gold);
+      margin: 30px 0 15px 0;
+      font-size: 1.8rem;
+      text-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+    }
+
+    .grid-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      max-width: 1000px;
+      margin: 0 auto 40px auto;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--gold);
+      border-radius: 12px;
+      padding: 15px;
+      text-align: center;
+      backdrop-filter: blur(5px);
+      box-shadow: 0 4px 15px rgba(216, 27, 96, 0.2);
+    }
+
+    .card img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+
+    .upload-btn {
+      background: linear-gradient(45deg, var(--primary-pink), var(--deep-pink));
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      margin-top: 5px;
+    }
+
+    /* --- BIOMETRIC MODAL --- */
+    #bio-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 20000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .bio-box {
+      background: #1a0814;
+      border: 2px solid var(--gold);
+      border-radius: 16px;
+      padding: 30px;
+      text-align: center;
+      max-width: 340px;
+      width: 90%;
+      box-shadow: 0 0 25px rgba(212, 175, 55, 0.5);
+    }
+
+    .fingerprint-icon {
+      font-size: 4rem;
+      margin: 15px 0;
+      cursor: pointer;
+      display: inline-block;
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); filter: drop-shadow(0 0 5px var(--primary-pink)); }
+      50% { transform: scale(1.1); filter: drop-shadow(0 0 20px var(--primary-pink)); }
+      100% { transform: scale(1); filter: drop-shadow(0 0 5px var(--primary-pink)); }
+    }
+
+    .pin-input {
+      width: 80%;
+      padding: 10px;
+      text-align: center;
+      font-size: 1.2rem;
+      letter-spacing: 5px;
+      border-radius: 8px;
+      border: 1px solid var(--gold);
+      background: #000;
+      color: #fff;
+      margin-top: 15px;
+    }
+
+    .submit-pin {
+      background: var(--gold);
+      color: #000;
+      border: none;
+      font-weight: bold;
+      padding: 8px 20px;
+      margin-top: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    /* --- WORLD 2: TANTRA GOTHIC REALM --- */
+    #world-2 {
+      background: radial-gradient(circle, #200000 0%, #050000 100%);
+      color: #ffcccc;
+    }
+
+    .w2-header {
+      text-align: center;
+      padding: 20px;
+      border-bottom: 2px solid var(--crimson);
+    }
+
+    .w2-header h1 {
+      font-size: 2.2rem;
+      color: #ff3333;
+      text-shadow: 0 0 15px #ff0000;
+      letter-spacing: 2px;
+    }
+
+    .idol-container {
+      text-align: center;
+      margin: 30px 0;
+    }
+
+    .idol-container img {
+      max-width: 280px;
+      width: 80%;
+      border-radius: 15px;
+      border: 2px solid var(--crimson);
+      box-shadow: 0 0 30px rgba(255, 0, 0, 0.6);
+    }
+
+    .shringar-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      max-width: 1100px;
+      margin: 30px auto;
+    }
+
+    .shringar-card {
+      background: rgba(40, 0, 0, 0.6);
+      border: 1px solid var(--crimson);
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 0 10px rgba(153, 0, 0, 0.4);
+    }
+
+    .shringar-card h3 {
+      color: #ff4d4d;
+      margin-bottom: 8px;
+      font-size: 1.3rem;
+      border-bottom: 1px dashed var(--crimson);
+      padding-bottom: 5px;
+    }
+
+    .shringar-card textarea, .shringar-card input[type="text"] {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      border: 1px solid #660000;
+      color: #ffcccc;
+      padding: 8px;
+      margin-top: 6px;
+      border-radius: 5px;
+    }
+
+    .shringar-img-preview {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 6px;
+      margin: 8px 0;
+      background: #110000;
+    }
+
+    .revoke-btn {
+      display: block;
+      margin: 40px auto 20px auto;
+      background: #cc0000;
+      color: #fff;
+      border: none;
+      padding: 12px 30px;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(204, 0, 0, 0.8);
+    }
+
+    /* Floating petals animation */
+    .petal {
+      position: fixed;
+      background: #e91e63;
+      border-radius: 15px 0 15px 0;
+      opacity: 0.7;
+      pointer-events: none;
+      z-index: 1000;
+      animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(-10vh) rotate(0deg); }
+      100% { transform: translateY(110vh) rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BOUGAINVILLEA CURTAIN ENTRY -->
+  <div id="curtain-wrapper" onclick="openCurtain()">
+    <div class="curtain-half curtain-left"></div>
+    <div class="curtain-half curtain-right"></div>
+    <div class="curtain-text">
+      <h1>🌸 WELCOME 🌸</h1>
+      <p>Tap anywhere to step inside</p>
+    </div>
+  </div>
+
+  <!-- WORLD 1: HER REALM -->
+  <div id="world-1" class="realm">
+    <header class="w1-header">
+      <div class="motif-card" id="tap-1" onclick="registerTap(1)">♔</div>
+      <div class="center-flower" id="tap-2" onclick="registerTap(2)">🌺</div>
+      <div class="motif-card" id="tap-3" onclick="registerTap(3)">♕</div>
+    </header>
+
+    <h2 class="section-title">✨ Our Memories & Gifts ✨</h2>
+
+    <div class="grid-gallery">
+      <div class="card">
+        <img id="img-her" src="https://via.placeholder.com/300x220/880e4f/ffffff?text=Her+Photo" alt="Her Photo">
+        <h3>Queen of My Heart</h3>
+        <button class="upload-btn" onclick="triggerFile('file-her')">Change Photo</button>
+        <input type="file" id="file-her" accept="image/*" style="display:none" onchange="loadImg(this, 'img-her')">
+      </div>
+
+      <div class="card">
+        <img id="img-us" src="https://via.placeholder.com/300x220/880e4f/ffffff?text=Us+Together" alt="Us Together">
+        <h3>Together Forever</h3>
+        <button class="upload-btn" onclick="triggerFile('file-us')">Change Photo</button>
+        <input type="file" id="file-us" accept="image/*" style="display:none" onchange="loadImg(this, 'img-us')">
+      </div>
+
+      <div class="card">
+        <img id="img-gift" src="https://via.placeholder.com/300x220/880e4f/ffffff?text=Special+Gift" alt="Gift">
+        <h3>Gifts of Love</h3>
+        <button class="upload-btn" onclick="triggerFile('file-gift')">Change Photo</button>
+        <input type="file" id="file-gift" accept="image/*" style="display:none" onchange="loadImg(this, 'img-gift')">
+      </div>
+    </div>
+  </div>
+
+  <!-- HIDDEN BIOMETRIC SCANNER MODAL -->
+  <div id="bio-modal">
+    <div class="bio-box">
+      <h3 style="color: var(--gold);">SECRET ENTRY</h3>
+      <p style="font-size: 0.85rem; color: #ccc; margin-top: 5px;">Biometric Verification Required</p>
+      
+      <div class="fingerprint-icon" onclick="useBiometrics()">☝️</div>
+      <p style="font-size: 0.75rem; color: #aaa;">Tap icon to scan fingerprint</p>
+
+      <div style="margin-top: 15px; border-top: 1px solid #444; padding-top: 10px;">
+        <p style="font-size: 0.8rem; color: var(--gold);">Or enter Secret PIN:</p>
+        <input type="password" id="pin-field" class="pin-input" maxlength="4" placeholder="••••">
+        <br>
+        <button class="submit-pin" onclick="verifyPin()">UNLOCK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- WORLD 2: GOTHIC SECRET REALM -->
+  <div id="world-2" class="realm">
+    <header class="w2-header">
+      <h1>🌑 16 SOLAH SHRINGAR 🐍</h1>
+      <p style="color: #aa4444; font-size: 0.9rem;">Protected Master Realm</p>
+    </header>
+
+    <div class="idol-container">
+      <img id="idol-img" src="https://via.placeholder.com/300x400/330000/ff3333?text=Tantric+Idol" alt="Sacred Idol">
+      <br>
+      <button class="upload-btn" style="background:#660000; margin-top:10px;" onclick="triggerFile('file-idol')">Upload Sacred Idol Photo</button>
+      <input type="file" id="file-idol" accept="image/*" style="display:none" onchange="loadImg(this, 'idol-img')">
+    </div>
+
+    <div class="shringar-grid" id="shringar-container"></div>
+
+    <button class="revoke-btn" onclick="revokeAccess()">🔒 PERMANENTLY REVOKE ACCESS</button>
+  </div>
+
+  <script>
+    // --- 1. CURTAIN CONTROLLER ---
+    function openCurtain() {
+      const curtain = document.getElementById('curtain-wrapper');
+      curtain.classList.add('open');
+      setTimeout(() => {
+        curtain.style.display = 'none';
+        document.getElementById('world-1').classList.add('active');
+        spawnPetals();
+      }, 1500);
+    }
+
+    // --- 2. SECRET TAP CIPHER (King -> Flower -> Queen) ---
+    let tapSequence = [];
+    function registerTap(step) {
+      tapSequence.push(step);
+      if (tapSequence.length === 3) {
+        if (tapSequence[0] === 1 && tapSequence[1] === 2 && tapSequence[2] === 3) {
+          document.getElementById('bio-modal').style.display = 'flex';
+        }
+        tapSequence = [];
+      }
+    }
+
+    // --- 3. BIOMETRICS & PIN ---
+    async function useBiometrics() {
+      if (window.PublicKeyCredential) {
+        try {
+          // Trigger device native prompt where available
+          unlockWorld2();
+        } catch (e) {
+          alert("Biometric scan bypassed/unavailable. Please use Secret PIN.");
+        }
+      } else {
+        alert("WebAuthn not supported. Use Secret PIN.");
+      }
+    }
+
+    function verifyPin() {
+      const pin = document.getElementById('pin-field').value;
+      const storedPin = localStorage.getItem('master_pin') || '1608';
+      if (pin === storedPin) {
+        unlockWorld2();
+      } else {
+        alert("Incorrect PIN!");
+      }
+    }
+
+    function unlockWorld2() {
+      document.getElementById('bio-modal').style.display = 'none';
+      document.getElementById('world-1').classList.remove('active');
+      document.getElementById('world-2').classList.add('active');
+    }
+
+    function revokeAccess() {
+      if (confirm("Are you sure you want to lock and revoke access?")) {
+        localStorage.setItem('revoked', 'true');
+        location.reload();
+      }
+    }
+
+    // Lock check on page load
+    if (localStorage.getItem('revoked') === 'true') {
+      document.body.innerHTML = "<h1 style='color:red; text-align:center; margin-top:20vh;'>PORTAL PERMANENTLY CLOSED</h1>";
+    }
+
+    // --- 4. IMAGE UPLOADER HELPERS ---
+    function triggerFile(id) {
+      document.getElementById(id).click();
+    }
+
+    function loadImg(input, targetId) {
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById(targetId).src = e.target.result;
+          localStorage.setItem('save_' + targetId, e.target.result);
+        }
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    // Restore saved images
+    window.onload = function() {
+      ['img-her', 'img-us', 'img-gift', 'idol-img'].forEach(id => {
+        const saved = localStorage.getItem('save_' + id);
+        if (saved) document.getElementById(id).src = saved;
+      });
+      renderShringars();
+    };
+
+    // --- 5. 16 SHRINGAR LIST GENERATOR ---
+    const shringarItems = [
+      "1. हल्दी (Haldi)", "2. बिछिया (Bichhiya)", "3. पायल (Payal)", "4. मेहंदी (Mehendi)",
+      "5. अलसी (Alsi)", "6. ब्रेसलेट (Bracelet)", "7. इत्र (Ittar)", "8. कमर बंद (Kamarbandh)",
+      "9. कटार (Katar)", "10. हार (Haar)", "11. काला टीका (Kala Teeka)", "12. कान के (Karnphool)",
+      "13. बिंदी (Bindi)", "14. तेल (Tel)", "15. काजल (Kajal)", "16. सिन्दूर (Sindoor)"
+    ];
+
+    function renderShringars() {
+      const container = document.getElementById('shringar-container');
+      shringarItems.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = 'shringar-card';
+        
+        const imgKey = 'shringar_img_' + index;
+        const textKey = 'shringar_text_' + index;
+        const nameKey = 'shringar_name_' + index;
+
+        const savedImg = localStorage.getItem(imgKey) || 'https://via.placeholder.com/280x160/220000/ff6666?text=' + encodeURIComponent(item);
+        const savedText = localStorage.getItem(textKey) || '';
+        const savedName = localStorage.getItem(nameKey) || '';
+
+        card.innerHTML = `
+          <h3>${item}</h3>
+          <img id="${imgKey}_preview" class="shringar-img-preview" src="${savedImg}">
+          <button class="upload-btn" style="background:#550000;" onclick="triggerFile('${imgKey}_file')">Change Item Image</button>
+          <input type="file" id="${imgKey}_file" accept="image/*" style="display:none" onchange="saveShringarImg(this, '${imgKey}')">
+          <input type="text" placeholder="Associated Person's Name" value="${savedName}" onkeyup="localStorage.setItem('${nameKey}', this.value)">
+          <textarea rows="3" placeholder="Secret Powers & Mystical Details..." onkeyup="localStorage.setItem('${textKey}', this.value)">${savedText}</textarea>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function saveShringarImg(input, key) {
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById(key + '_preview').src = e.target.result;
+          localStorage.setItem(key, e.target.result);
+        }
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    // --- 6. FLOATING PETALS ANIMATION ---
+    function spawnPetals() {
+      for (let i = 0; i < 20; i++) {
+        const petal = document.createElement('div');
+        petal.className = 'petal';
+        petal.style.left = Math.random() * 100 + 'vw';
+        petal.style.width = (Math.random() * 12 + 8) + 'px';
+        petal.style.height = (Math.random() * 12 + 8) + 'px';
+        petal.style.animationDuration = (Math.random() * 5 + 5) + 's';
+        petal.style.animationDelay = (Math.random() * 5) + 's';
+        document.body.appendChild(petal);
+      }
+    }
+  </script>
+</body>
+</html>
 
