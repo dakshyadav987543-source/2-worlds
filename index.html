@@ -48,21 +48,11 @@
       position: relative;
     }
 
-    .curtain-left {
-      border-right: 2px solid var(--gold);
-    }
+    .curtain-left { border-right: 2px solid var(--gold); }
+    .curtain-right { border-left: 2px solid var(--gold); }
 
-    .curtain-right {
-      border-left: 2px solid var(--gold);
-    }
-
-    #curtain-wrapper.open .curtain-left {
-      transform: translateX(-100%);
-    }
-
-    #curtain-wrapper.open .curtain-right {
-      transform: translateX(100%);
-    }
+    #curtain-wrapper.open .curtain-left { transform: translateX(-100%); }
+    #curtain-wrapper.open .curtain-right { transform: translateX(100%); }
 
     .curtain-text {
       position: absolute;
@@ -77,33 +67,15 @@
       text-shadow: 0 0 15px rgba(216, 27, 96, 0.9), 0 0 5px #000;
     }
 
-    .curtain-text h1 {
-      font-size: 2.5rem;
-      letter-spacing: 3px;
-      margin-bottom: 10px;
-    }
-
-    .curtain-text p {
-      font-size: 1.1rem;
-      color: #f8bbd0;
-    }
+    .curtain-text h1 { font-size: 2.5rem; letter-spacing: 3px; margin-bottom: 10px; }
+    .curtain-text p { font-size: 1.1rem; color: #f8bbd0; }
 
     #curtain-wrapper.open + .curtain-text,
-    #curtain-wrapper.open .curtain-text {
-      opacity: 0;
-    }
+    #curtain-wrapper.open .curtain-text { opacity: 0; }
 
     /* --- COMMON CONTAINER --- */
-    .realm {
-      display: none;
-      min-height: 100vh;
-      padding: 20px;
-      position: relative;
-    }
-
-    .realm.active {
-      display: block;
-    }
+    .realm { display: none; min-height: 100vh; padding: 20px; position: relative; }
+    .realm.active { display: block; }
 
     /* --- WORLD 1: ROYAL BOUGAINVILLEA REALM --- */
     #world-1 {
@@ -120,19 +92,8 @@
       background: rgba(20, 5, 15, 0.7);
     }
 
-    .motif-card {
-      font-size: 2rem;
-      cursor: pointer;
-      user-select: none;
-      transition: transform 0.2s;
-    }
-    .motif-card:active { transform: scale(1.2); }
-
-    .center-flower {
-      font-size: 2.2rem;
-      cursor: pointer;
-      user-select: none;
-    }
+    .motif-card { font-size: 2rem; cursor: pointer; user-select: none; }
+    .center-flower { font-size: 2.2rem; cursor: pointer; user-select: none; }
 
     .section-title {
       text-align: center;
@@ -144,10 +105,10 @@
 
     .grid-gallery {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 20px;
       max-width: 1000px;
-      margin: 0 auto 40px auto;
+      margin: 0 auto 30px auto;
     }
 
     .card {
@@ -160,13 +121,36 @@
       box-shadow: 0 4px 15px rgba(216, 27, 96, 0.2);
     }
 
-    .card img {
+    .slider-container {
+      position: relative;
       width: 100%;
       height: 220px;
-      object-fit: cover;
-      border-radius: 8px;
       margin-bottom: 12px;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #000;
     }
+
+    .slider-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .slider-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.6);
+      color: #fff;
+      border: 1px solid var(--gold);
+      padding: 6px 10px;
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 0.9rem;
+    }
+    .slider-prev { left: 5px; }
+    .slider-next { right: 5px; }
 
     .upload-btn {
       background: linear-gradient(45deg, var(--primary-pink), var(--deep-pink));
@@ -177,6 +161,30 @@
       cursor: pointer;
       font-size: 0.85rem;
       margin-top: 5px;
+    }
+
+    /* Secret Love Note Section */
+    .love-note-box {
+      max-width: 800px;
+      margin: 30px auto;
+      background: rgba(44, 0, 30, 0.8);
+      border: 1px solid var(--gold);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+    }
+    .love-note-box textarea {
+      width: 100%;
+      height: 120px;
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid var(--gold);
+      color: #f8bbd0;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 1rem;
+      margin-top: 10px;
+      resize: vertical;
     }
 
     /* --- BIOMETRIC MODAL --- */
@@ -258,11 +266,7 @@
       letter-spacing: 2px;
     }
 
-    .idol-container {
-      text-align: center;
-      margin: 30px 0;
-    }
-
+    .idol-container { text-align: center; margin: 30px 0; }
     .idol-container img {
       max-width: 280px;
       width: 80%;
@@ -328,7 +332,6 @@
       box-shadow: 0 0 15px rgba(204, 0, 0, 0.8);
     }
 
-    /* Floating petals animation */
     .petal {
       position: fixed;
       background: #e91e63;
@@ -360,44 +363,59 @@
   <!-- WORLD 1: HER REALM -->
   <div id="world-1" class="realm">
     <header class="w1-header">
-      <div class="motif-card" id="tap-1" onclick="registerTap(1)">♔</div>
-      <div class="center-flower" id="tap-2" onclick="registerTap(2)">🌺</div>
-      <div class="motif-card" id="tap-3" onclick="registerTap(3)">♕</div>
+      <div class="motif-card" onclick="registerTap(1)">♔</div>
+      <div class="center-flower" onclick="registerTap(2)">🌺</div>
+      <div class="motif-card" onclick="registerTap(3)">♕</div>
     </header>
 
     <h2 class="section-title">✨ Our Memories & Gifts ✨</h2>
 
     <div class="grid-gallery">
+      <!-- Card 1: Her Photos -->
       <div class="card">
-        <img id="img-her" src="https://via.placeholder.com/300x220/880e4f/ffffff?text=Her+Photo" alt="Her Photo">
         <h3>Queen of My Heart</h3>
-        <button class="upload-btn" onclick="triggerFile('file-her')">Change Photo</button>
-        <input type="file" id="file-her" accept="image/*" style="display:none" onchange="loadImg(this, 'img-her')">
+        <div class="slider-container" id="slider-her">
+          <img src="https://via.placeholder.com/300x220/880e4f/ffffff?text=Upload+Her+Photos" alt="Her Photo">
+        </div>
+        <button class="upload-btn" onclick="triggerFile('file-her')">+ Add / Change Photos</button>
+        <input type="file" id="file-her" accept="image/*" multiple style="display:none" onchange="handleMultipleUpload(this, 'her')">
       </div>
 
+      <!-- Card 2: Us Together -->
       <div class="card">
-        <img id="img-us" src="https://via.placeholder.com/300x220/880e4f/ffffff?text=Us+Together" alt="Us Together">
         <h3>Together Forever</h3>
-        <button class="upload-btn" onclick="triggerFile('file-us')">Change Photo</button>
-        <input type="file" id="file-us" accept="image/*" style="display:none" onchange="loadImg(this, 'img-us')">
+        <div class="slider-container" id="slider-us">
+          <img src="https://via.placeholder.com/300x220/880e4f/ffffff?text=Upload+Our+Photos" alt="Us Together">
+        </div>
+        <button class="upload-btn" onclick="triggerFile('file-us')">+ Add / Change Photos</button>
+        <input type="file" id="file-us" accept="image/*" multiple style="display:none" onchange="handleMultipleUpload(this, 'us')">
       </div>
 
+      <!-- Card 3: Gifts -->
       <div class="card">
-        <img id="img-gift" src="https://via.placeholder.com/300x220/880e4f/ffffff?text=Special+Gift" alt="Gift">
         <h3>Gifts of Love</h3>
-        <button class="upload-btn" onclick="triggerFile('file-gift')">Change Photo</button>
-        <input type="file" id="file-gift" accept="image/*" style="display:none" onchange="loadImg(this, 'img-gift')">
+        <div class="slider-container" id="slider-gift">
+          <img src="https://via.placeholder.com/300x220/880e4f/ffffff?text=Upload+Gift+Photos" alt="Gift">
+        </div>
+        <button class="upload-btn" onclick="triggerFile('file-gift')">+ Add / Change Photos</button>
+        <input type="file" id="file-gift" accept="image/*" multiple style="display:none" onchange="handleMultipleUpload(this, 'gift')">
       </div>
+    </div>
+
+    <!-- SECRET LOVE NOTE FOR HER -->
+    <div class="love-note-box">
+      <h3 style="color: var(--gold);">💌 A Secret Note For You</h3>
+      <textarea id="love-note-input" placeholder="Write your heartfelt note here... It saves automatically!" onkeyup="saveLoveNote(this.value)"></textarea>
     </div>
   </div>
 
-  <!-- HIDDEN BIOMETRIC SCANNER MODAL -->
+  <!-- HIDDEN BIOMETRIC MODAL -->
   <div id="bio-modal">
     <div class="bio-box">
       <h3 style="color: var(--gold);">SECRET ENTRY</h3>
       <p style="font-size: 0.85rem; color: #ccc; margin-top: 5px;">Biometric Verification Required</p>
       
-      <div class="fingerprint-icon" onclick="useBiometrics()">☝️</div>
+      <div class="fingerprint-icon" onclick="unlockWorld2()">☝️</div>
       <p style="font-size: 0.75rem; color: #aaa;">Tap icon to scan fingerprint</p>
 
       <div style="margin-top: 15px; border-top: 1px solid #444; padding-top: 10px;">
@@ -420,7 +438,7 @@
       <img id="idol-img" src="https://via.placeholder.com/300x400/330000/ff3333?text=Tantric+Idol" alt="Sacred Idol">
       <br>
       <button class="upload-btn" style="background:#660000; margin-top:10px;" onclick="triggerFile('file-idol')">Upload Sacred Idol Photo</button>
-      <input type="file" id="file-idol" accept="image/*" style="display:none" onchange="loadImg(this, 'idol-img')">
+      <input type="file" id="file-idol" accept="image/*" style="display:none" onchange="loadSingleImg(this, 'idol-img', 'save_idol-img')">
     </div>
 
     <div class="shringar-grid" id="shringar-container"></div>
@@ -453,19 +471,6 @@
     }
 
     // --- 3. BIOMETRICS & PIN ---
-    async function useBiometrics() {
-      if (window.PublicKeyCredential) {
-        try {
-          // Trigger device native prompt where available
-          unlockWorld2();
-        } catch (e) {
-          alert("Biometric scan bypassed/unavailable. Please use Secret PIN.");
-        }
-      } else {
-        alert("WebAuthn not supported. Use Secret PIN.");
-      }
-    }
-
     function verifyPin() {
       const pin = document.getElementById('pin-field').value;
       const storedPin = localStorage.getItem('master_pin') || '1608';
@@ -489,37 +494,104 @@
       }
     }
 
-    // Lock check on page load
     if (localStorage.getItem('revoked') === 'true') {
       document.body.innerHTML = "<h1 style='color:red; text-align:center; margin-top:20vh;'>PORTAL PERMANENTLY CLOSED</h1>";
     }
 
-    // --- 4. IMAGE UPLOADER HELPERS ---
+    // --- 4. MULTI-PHOTO SLIDER SYSTEM ---
+    let slidersData = {
+      her: JSON.parse(localStorage.getItem('photos_her')) || [],
+      us: JSON.parse(localStorage.getItem('photos_us')) || [],
+      gift: JSON.parse(localStorage.getItem('photos_gift')) || []
+    };
+
+    let currentIndices = { her: 0, us: 0, gift: 0 };
+
     function triggerFile(id) {
       document.getElementById(id).click();
     }
 
-    function loadImg(input, targetId) {
+    function handleMultipleUpload(input, category) {
+      if (input.files && input.files.length > 0) {
+        let loadedCount = 0;
+        let newImages = [];
+        Array.from(input.files).forEach(file => {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            newImages.push(e.target.result);
+            loadedCount++;
+            if (loadedCount === input.files.length) {
+              slidersData[category] = newImages; // Replace or append as desired
+              localStorage.setItem('photos_' + category, JSON.stringify(slidersData[category]));
+              currentIndices[category] = 0;
+              renderSlider(category);
+            }
+          }
+          reader.readAsDataURL(file);
+        });
+      }
+    }
+
+    function renderSlider(category) {
+      const container = document.getElementById('slider-' + category);
+      const images = slidersData[category];
+      if (images.length === 0) return;
+
+      let idx = currentIndices[category];
+      container.innerHTML = `
+        <img src="${images[idx]}" alt="Memory">
+        ${images.length > 1 ? `
+          <button class="slider-btn slider-prev" onclick="changeSlide('${category}', -1)">❮</button>
+          <button class="slider-btn slider-next" onclick="changeSlide('${category}', 1)">❯</button>
+        ` : ''}
+      `;
+    }
+
+    function changeSlide(category, direction) {
+      const images = slidersData[category];
+      if (images.length === 0) return;
+      currentIndices[category] += direction;
+      if (currentIndices[category] < 0) currentIndices[category] = images.length - 1;
+      if (currentIndices[category] >= images.length) currentIndices[category] = 0;
+      renderSlider(category);
+    }
+
+    // --- 5. LOVE NOTE STORAGE ---
+    function saveLoveNote(text) {
+      localStorage.setItem('secret_love_note', text);
+    }
+
+    // --- 6. SINGLE IMAGE UPLOADER (For Idol) ---
+    function loadSingleImg(input, targetId, storageKey) {
       if (input.files && input.files[0]) {
         const reader = new FileReader();
         reader.onload = function(e) {
           document.getElementById(targetId).src = e.target.result;
-          localStorage.setItem('save_' + targetId, e.target.result);
+          localStorage.setItem(storageKey, e.target.result);
         }
         reader.readAsDataURL(input.files[0]);
       }
     }
 
-    // Restore saved images
+    // --- INITIALIZE ON LOAD ---
     window.onload = function() {
-      ['img-her', 'img-us', 'img-gift', 'idol-img'].forEach(id => {
-        const saved = localStorage.getItem('save_' + id);
-        if (saved) document.getElementById(id).src = saved;
+      // Render sliders
+      ['her', 'us', 'gift'].forEach(cat => {
+        if (slidersData[cat].length > 0) renderSlider(cat);
       });
+
+      // Load Love Note
+      const savedNote = localStorage.getItem('secret_love_note');
+      if (savedNote) document.getElementById('love-note-input').value = savedNote;
+
+      // Load Idol Image
+      const savedIdol = localStorage.getItem('save_idol-img');
+      if (savedIdol) document.getElementById('idol-img').src = savedIdol;
+
       renderShringars();
     };
 
-    // --- 5. 16 SHRINGAR LIST GENERATOR ---
+    // --- 7. 16 SHRINGAR LIST GENERATOR ---
     const shringarItems = [
       "1. हल्दी (Haldi)", "2. बिछिया (Bichhiya)", "3. पायल (Payal)", "4. मेहंदी (Mehendi)",
       "5. अलसी (Alsi)", "6. ब्रेसलेट (Bracelet)", "7. इत्र (Ittar)", "8. कमर बंद (Kamarbandh)",
@@ -545,7 +617,7 @@
           <h3>${item}</h3>
           <img id="${imgKey}_preview" class="shringar-img-preview" src="${savedImg}">
           <button class="upload-btn" style="background:#550000;" onclick="triggerFile('${imgKey}_file')">Change Item Image</button>
-          <input type="file" id="${imgKey}_file" accept="image/*" style="display:none" onchange="saveShringarImg(this, '${imgKey}')">
+          <input type="file" id="${imgKey}_file" accept="image/*" style="display:none" onchange="loadSingleImg(this, '${imgKey}_preview', '${imgKey}')">
           <input type="text" placeholder="Associated Person's Name" value="${savedName}" onkeyup="localStorage.setItem('${nameKey}', this.value)">
           <textarea rows="3" placeholder="Secret Powers & Mystical Details..." onkeyup="localStorage.setItem('${textKey}', this.value)">${savedText}</textarea>
         `;
@@ -553,31 +625,7 @@
       });
     }
 
-    function saveShringarImg(input, key) {
-      if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          document.getElementById(key + '_preview').src = e.target.result;
-          localStorage.setItem(key, e.target.result);
-        }
-        reader.readAsDataURL(input.files[0]);
-      }
-    }
-
-    // --- 6. FLOATING PETALS ANIMATION ---
+    // --- 8. FLOATING PETALS ANIMATION ---
     function spawnPetals() {
       for (let i = 0; i < 20; i++) {
-        const petal = document.createElement('div');
-        petal.className = 'petal';
-        petal.style.left = Math.random() * 100 + 'vw';
-        petal.style.width = (Math.random() * 12 + 8) + 'px';
-        petal.style.height = (Math.random() * 12 + 8) + 'px';
-        petal.style.animationDuration = (Math.random() * 5 + 5) + 's';
-        petal.style.animationDelay = (Math.random() * 5) + 's';
-        document.body.appendChild(petal);
-      }
-    }
-  </script>
-</body>
-</html>
-
+        const petal = document.cr
